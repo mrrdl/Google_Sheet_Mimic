@@ -1,0 +1,82 @@
+/* Spreadsheet Container */
+.spreadsheet-container {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f4f4f4;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.toolbar button {
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.toolbar button:hover {
+  background-color: #0056b3;
+}
+
+/* Formula Bar */
+.formula-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.formula-bar input {
+  flex: 1;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.formula-bar button {
+  padding: 10px 15px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.formula-bar button:hover {
+  background-color: #218838;
+}
+
+/* Grid */
+.grid {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  background-color: white;
+}
+
+.grid-row {
+  display: flex;
+}
+
+.grid-cell {
+  width: 80px;
+  height: 30px;
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  padding: 5px;
+  outline: none;
+}
+
+.grid-cell:focus {
+  border: 2px solid #007bff;
+  background-color: #e8f4ff;
+}
