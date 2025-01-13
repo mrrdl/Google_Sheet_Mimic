@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./Spreadsheet.css";
+import ChartComponent from "./chartComponent";
+
 
 const Spreadsheet = () => {
   const [data, setData] = useState(
@@ -11,6 +13,11 @@ const Spreadsheet = () => {
   const [formula, setFormula] = useState("");
   const [findText, setFindText] = useState("");
   const [replaceText, setReplaceText] = useState("");
+  const [dragStart, setDragStart] = useState(null);
+  const [chartType, setChartType] = useState("bar");
+  const [fontSize, setFontSize] = useState(14); // Default font size
+
+
 
   // Handle cell value changes
   const handleChange = (row, col, value) => {
@@ -19,9 +26,37 @@ const Spreadsheet = () => {
     setData(updatedData);
   };
 
-  // Apply styles to selected cell
+  // Handle mouse down for drag
+  const handleMouseDown = (row, col) => {
+    setDragStart({ row, col });
+  };
+
+  // Handle mouse up for drag
+  const handleMouseUp = (row, col) => {
+    if (dragStart) {
+      const startValue = data[dragStart.row][dragStart.col].value;
+      const updatedData = [...data];
+      const startRow = Math.min(dragStart.row, row);
+      const endRow = Math.max(dragStart.row, row);
+      const startCol = Math.min(dragStart.col, col);
+      const endCol = Math.max(dragStart.col, col);
+
+      for (let i = startRow; i <= endRow; i++) {
+        for (let j = startCol; j <= endCol; j++) {
+          updatedData[i][j] = { ...updatedData[i][j], value: startValue };
+        }
+      }
+
+      setData(updatedData);
+      setDragStart(null);
+    }
+  };
+  
   const applyStyle = (style) => {
-    if (!selectedCell) return;
+    if (!selectedCell) {
+      alert("Please select a cell first.");
+      return;
+    }
     const [row, col] = selectedCell;
     const updatedData = [...data];
     updatedData[row][col] = {
@@ -29,35 +64,57 @@ const Spreadsheet = () => {
       style: { ...updatedData[row][col].style, ...style },
     };
     setData(updatedData);
-  };
+  };  
 
-  // Add rows/columns
+  // Add Row
   const addRow = () => {
     const newRow = Array(data[0].length).fill({ value: "", style: {} });
     setData([...data, newRow]);
   };
 
+  // Add Column
   const addColumn = () => {
     const updatedData = data.map((row) => [...row, { value: "", style: {} }]);
     setData(updatedData);
   };
 
-  // Delete rows/columns
+  // Delete Last Row
   const deleteRow = () => {
     if (data.length > 1) {
-      const updatedData = data.slice(0, -1);
-      setData(updatedData);
+      setData(data.slice(0, -1));
+    } else {
+      alert("Cannot delete the last row.");
     }
   };
 
+  // Delete Last Column
   const deleteColumn = () => {
     if (data[0].length > 1) {
       const updatedData = data.map((row) => row.slice(0, -1));
       setData(updatedData);
+    } else {
+      alert("Cannot delete the last column.");
     }
   };
 
-  // Apply formula
+  // Save spreadsheet to localStorage
+  const saveSpreadsheet = () => {
+    localStorage.setItem("spreadsheetData", JSON.stringify(data));
+    alert("Spreadsheet saved successfully!");
+  };
+
+  // Load spreadsheet from localStorage
+  const loadSpreadsheet = () => {
+    const savedData = localStorage.getItem("spreadsheetData");
+    if (savedData) {
+      setData(JSON.parse(savedData));
+      alert("Spreadsheet loaded successfully!");
+    } else {
+      alert("No saved spreadsheet found.");
+    }
+  };
+
+  // Apply formula logic
   const evaluateFormula = () => {
     if (!selectedCell || !formula.startsWith("=")) return;
 
@@ -114,7 +171,7 @@ const Spreadsheet = () => {
     setData(updatedData);
   };
 
-  // Data Quality Features
+  // Data Quality Functions
   const applyTrim = () => {
     if (!selectedCell) return;
     const [row, col] = selectedCell;
@@ -160,19 +217,53 @@ const Spreadsheet = () => {
 
   return (
     <div className="spreadsheet-container">
+      {/* Toolbar */}
       <div className="toolbar">
-        <button onClick={() => applyStyle({ fontWeight: "bold" })}>Bold</button>
-        <button onClick={() => applyStyle({ fontStyle: "italic" })}>Italic</button>
-        <button onClick={addRow}>Add Row</button>
-        <button onClick={addColumn}>Add Column</button>
-        <button onClick={deleteRow}>Delete Row</button>
-        <button onClick={deleteColumn}>Delete Column</button>
-        <button onClick={applyTrim}>Trim</button>
-        <button onClick={applyUpper}>Uppercase</button>
-        <button onClick={applyLower}>Lowercase</button>
-        <button onClick={removeDuplicates}>Remove Duplicates</button>
+            <div className="toolbar">
+                <button onClick={() => applyStyle({ fontWeight: "bold" })}>Bold</button>
+                <button onClick={() => applyStyle({ fontStyle: "italic" })}>Italic</button>
+
+                {/* Dynamic Font Size Selector */}
+                <label htmlFor="fontSizeSelector" style={{ marginRight: "10px" , marginLeft: "10px" , alignContent:"center"}}>
+                    Font Size:
+                </label>
+                <select
+                    id="fontSizeSelector"
+                    value={fontSize} // State for dynamic font size
+                    onChange={(e) => setFontSize(Number(e.target.value))}
+                    style={{
+                    padding: "5px",
+                    fontSize: "14px",
+                    border: "1px solid #ccc",
+                    borderRadius: "4px",
+                    marginRight: "10px",
+                    }}
+                >
+                    {[...Array(19)].map((_, i) => (
+                    <option key={i + 2} value={i + 2}>
+                        {i + 2}px
+                    </option>
+                    ))}
+                </select>
+                <button onClick={() => applyStyle({ fontSize: `${fontSize}px` })}>
+                    Apply Font Size
+                </button>
+
+                {/* Existing Buttons */}
+                <button onClick={addRow}>Add Row</button>
+                <button onClick={addColumn}>Add Column</button>
+                <button onClick={deleteRow}>Delete Row</button>
+                <button onClick={deleteColumn}>Delete Column</button>
+                <button onClick={applyTrim}>Trim</button>
+                <button onClick={applyUpper}>Uppercase</button>
+                <button onClick={applyLower}>Lowercase</button>
+                <button onClick={removeDuplicates}>Remove Duplicates</button>
+                <button onClick={saveSpreadsheet}>Save</button>
+                <button onClick={loadSpreadsheet}>Load</button>
+        </div>
       </div>
 
+      {/* Find and Replace */}
       <div className="find-replace">
         <input
           type="text"
@@ -189,7 +280,6 @@ const Spreadsheet = () => {
         <button onClick={findAndReplace}>Find & Replace</button>
       </div>
 
-      <div className="formula-bar">
         <input
           type="text"
           placeholder="Enter formula (e.g., =SUM(A1:A5))"
@@ -197,17 +287,42 @@ const Spreadsheet = () => {
           onChange={(e) => setFormula(e.target.value)}
         />
         <button onClick={evaluateFormula}>Apply Formula</button>
-      </div>
+        <select
+            value={chartType}
+            onChange={(e) => setChartType(e.target.value)}
+            style={{
+            padding: "8px",
+            fontSize: "14px",
+            border: "1px solid #ccc",
+            borderRadius: "4px",
+            marginLeft: "10px",
+            }}
+        >
+            <option value="bar">Bar Chart</option>
+            <option value="line">Line Chart</option>
+            <option value="pie">Pie Chart</option>
+        </select>
 
-      <div className="grid">
+      {/* Spreadsheet Grid */}
+      <div className="spreadsheet">
+        <div className="grid-header">
+            <div className="grid-header-cell"></div> {/* Empty cell for the top-left corner */}
+            {data[0].map((_, colIndex) => (
+                <div key={colIndex} className="grid-header-cell horizontal">
+                    {String.fromCharCode(65 + colIndex)} {/* A, B, C, etc. */}
+                </div>
+            ))}
+        </div>
         {data.map((row, rowIndex) => (
           <div key={rowIndex} className="grid-row">
+            <div className="grid-header-cell">{rowIndex + 1}</div>
             {row.map((cell, colIndex) => (
               <input
                 key={`${rowIndex}-${colIndex}`}
                 className="grid-cell"
-                style={cell.style}
                 value={cell.value}
+                onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
+                onMouseUp={() => handleMouseUp(rowIndex, colIndex)}
                 onFocus={() => setSelectedCell([rowIndex, colIndex])}
                 onChange={(e) =>
                   handleChange(rowIndex, colIndex, e.target.value)
@@ -217,7 +332,9 @@ const Spreadsheet = () => {
           </div>
         ))}
       </div>
+      <ChartComponent data={data} chartType={chartType} />
     </div>
+    
   );
 };
 

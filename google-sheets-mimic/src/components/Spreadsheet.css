@@ -1,82 +1,146 @@
-/* Spreadsheet Container */
+/* Container Styling */
 .spreadsheet-container {
   font-family: Arial, sans-serif;
   padding: 20px;
-  background-color: #f4f4f4;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-width: 100%;
+  overflow: auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Toolbar */
 .toolbar {
   display: flex;
   gap: 10px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
+  padding: 10px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .toolbar button {
-  padding: 10px 15px;
+  padding: 8px 12px;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 .toolbar button:hover {
   background-color: #0056b3;
 }
 
-/* Formula Bar */
-.formula-bar {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.formula-bar input {
+.toolbar input {
   flex: 1;
-  padding: 10px;
+  padding: 8px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
-.formula-bar button {
-  padding: 10px 15px;
+/* Find and Replace */
+.find-replace {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.find-replace input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 150px;
+}
+
+.find-replace button {
+  padding: 8px 12px;
   background-color: #28a745;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
-.formula-bar button:hover {
+.find-replace button:hover {
   background-color: #218838;
 }
 
-/* Grid */
-.grid {
+/* Grid Header */
+.grid-header {
   display: flex;
-  flex-direction: column;
-  border: 1px solid #ddd;
-  background-color: white;
+  background-color: #f1f3f4;
+  font-weight: bold;
+  border-bottom: 2px solid #ccc;
 }
 
+.grid-header-cell {
+  width: 100px; /* Match the width of grid cells */
+  height: 40px; /* Match the height of grid cells */
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #ccc;
+}
+
+.grid-header-cell:last-child {
+  border-right: none;
+}
+
+/* Grid Row */
 .grid-row {
   display: flex;
 }
 
+.grid-header-cell, .grid-cell {
+  background-color: #fff;
+  border: 1px solid #ccc;
+}
+
 .grid-cell {
-  width: 80px;
-  height: 30px;
+  width: 100px;
+  height: 40px;
   text-align: center;
-  border: 1px solid #ddd;
-  font-size: 14px;
   padding: 5px;
+  font-size: 14px;
+  border: 1px solid #ddd;
   outline: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
 
 .grid-cell:focus {
-  border: 2px solid #007bff;
-  background-color: #e8f4ff;
+  background-color: #e8f0fe;
+  border: 2px solid #4285f4;
+}
+
+/* Alternate Row Colors */
+.grid-row:nth-child(odd) .grid-cell {
+  background-color: #f9f9f9;
+}
+
+/* Resizable Columns (Optional Future Enhancement) */
+.grid-header-cell-resize {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 5px;
+  height: 100%;
+  cursor: col-resize;
+  background-color: transparent;
+}
+
+.grid-header-cell-resize:hover {
+  background-color: #ddd;
 }
