@@ -26,13 +26,11 @@ const Spreadsheet = () => {
     setData(updatedData);
   };
 
-  // Handle mouse down for drag
   const handleMouseDown = (row, col) => {
     setDragStart({ row, col });
   };
 
-  // Handle mouse up for drag
-  const handleMouseUp = (row, col) => {
+  const handleMouseEnter = (row, col) => {
     if (dragStart) {
       const startValue = data[dragStart.row][dragStart.col].value;
       const updatedData = [...data];
@@ -48,8 +46,11 @@ const Spreadsheet = () => {
       }
 
       setData(updatedData);
-      setDragStart(null);
     }
+  };
+
+  const handleMouseUp = () => {
+    setDragStart(null);
   };
   
   const applyStyle = (style) => {
@@ -59,12 +60,20 @@ const Spreadsheet = () => {
     }
     const [row, col] = selectedCell;
     const updatedData = [...data];
+    const currentStyle = updatedData[row][col].style || {};
+
+    // Handle font size separately
+    if (style.fontSize) {
+      currentStyle.fontSize = `${style.fontSize}px`;
+    }
+
     updatedData[row][col] = {
       ...updatedData[row][col],
-      style: { ...updatedData[row][col].style, ...style },
+      style: { ...currentStyle, ...style },
     };
+
     setData(updatedData);
-  };  
+  };
 
   // Add Row
   const addRow = () => {
@@ -222,11 +231,7 @@ const Spreadsheet = () => {
             <div className="toolbar">
                 <button onClick={() => applyStyle({ fontWeight: "bold" })}>Bold</button>
                 <button onClick={() => applyStyle({ fontStyle: "italic" })}>Italic</button>
-
                 {/* Dynamic Font Size Selector */}
-                <label htmlFor="fontSizeSelector" style={{ marginRight: "10px" , marginLeft: "10px" , alignContent:"center"}}>
-                    Font Size:
-                </label>
                 <select
                     id="fontSizeSelector"
                     value={fontSize} // State for dynamic font size
@@ -236,14 +241,14 @@ const Spreadsheet = () => {
                     fontSize: "14px",
                     border: "1px solid #ccc",
                     borderRadius: "4px",
-                    marginRight: "10px",
+                    marginRight: "7px",
                     }}
                 >
-                    {[...Array(19)].map((_, i) => (
+                  {[...Array(19)].map((_, i) => (
                     <option key={i + 2} value={i + 2}>
-                        {i + 2}px
+                      {i + 2}px
                     </option>
-                    ))}
+                  ))}
                 </select>
                 <button onClick={() => applyStyle({ fontSize: `${fontSize}px` })}>
                     Apply Font Size
@@ -322,7 +327,8 @@ const Spreadsheet = () => {
                 className="grid-cell"
                 value={cell.value}
                 onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
-                onMouseUp={() => handleMouseUp(rowIndex, colIndex)}
+                onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
+                onMouseUp={handleMouseUp}
                 onFocus={() => setSelectedCell([rowIndex, colIndex])}
                 onChange={(e) =>
                   handleChange(rowIndex, colIndex, e.target.value)
@@ -334,7 +340,6 @@ const Spreadsheet = () => {
       </div>
       <ChartComponent data={data} chartType={chartType} />
     </div>
-    
   );
 };
 
