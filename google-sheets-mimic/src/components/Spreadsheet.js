@@ -250,7 +250,7 @@ const Spreadsheet = () => {
                     </option>
                   ))}
                 </select>
-                <button onClick={() => applyStyle({ fontSize: `${fontSize}px` })}>
+                <button onClick={(fontSize) => applyStyle({ fontSize: `${fontSize}px` })}>
                     Apply Font Size
                 </button>
 

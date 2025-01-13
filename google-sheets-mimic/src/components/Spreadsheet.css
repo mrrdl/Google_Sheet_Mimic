@@ -6,13 +6,14 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   max-width: 100%;
-  overflow: auto;
+  overflow-x: auto;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Toolbar */
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;
   padding: 10px;
@@ -31,24 +32,35 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .toolbar button:hover {
   background-color: #0056b3;
+  transform: translateY(-2px);
 }
 
+.toolbar select,
 .toolbar input {
   flex: 1;
+  min-width: 120px;
   padding: 8px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  transition: border-color 0.3s ease;
+}
+
+.toolbar select:focus,
+.toolbar input:focus {
+  border-color: #007bff;
+  outline: none;
 }
 
 /* Find and Replace */
 .find-replace {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -58,7 +70,7 @@
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  width: 150px;
+  flex: 1;
 }
 
 .find-replace button {
@@ -70,11 +82,12 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: bold;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .find-replace button:hover {
   background-color: #218838;
+  transform: translateY(-2px);
 }
 
 /* Grid Header */
@@ -93,6 +106,10 @@
   align-items: center;
   justify-content: center;
   border-right: 1px solid #ccc;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: #f4f4f4;
+  user-select: none;
 }
 
 .grid-header-cell:last-child {
@@ -104,9 +121,9 @@
   display: flex;
 }
 
-.grid-header-cell, .grid-cell {
-  background-color: #fff;
-  border: 1px solid #ccc;
+.grid-header-cell,
+.grid-cell {
+  border: 1px solid #ddd;
 }
 
 .grid-cell {
@@ -117,12 +134,14 @@
   font-size: 14px;
   border: 1px solid #ddd;
   outline: none;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  background-color: white;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .grid-cell:focus {
   background-color: #e8f0fe;
   border: 2px solid #4285f4;
+  box-shadow: 0 0 4px rgba(66, 133, 244, 0.5);
 }
 
 /* Alternate Row Colors */
@@ -143,4 +162,25 @@
 
 .grid-header-cell-resize:hover {
   background-color: #ddd;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .toolbar {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .toolbar button,
+  .toolbar select,
+  .toolbar input {
+    width: 100%;
+  }
+
+  .grid-header-cell,
+  .grid-cell {
+    font-size: 12px;
+    width: 80px;
+    height: 35px;
+  }
 }
