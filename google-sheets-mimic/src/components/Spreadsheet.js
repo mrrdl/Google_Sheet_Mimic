@@ -58,22 +58,33 @@ const Spreadsheet = () => {
       alert("Please select a cell first.");
       return;
     }
+  
     const [row, col] = selectedCell;
-    const updatedData = [...data];
-    const currentStyle = updatedData[row][col].style || {};
-
-    // Handle font size separately
-    if (style.fontSize) {
-      currentStyle.fontSize = `${style.fontSize}px`;
-    }
-
-    updatedData[row][col] = {
-      ...updatedData[row][col],
-      style: { ...currentStyle, ...style },
-    };
-
-    setData(updatedData);
+  
+    // Create a deep copy of data to avoid directly mutating the state
+    const updatedData = data.map((rowData, rowIndex) =>
+      rowData.map((cell, colIndex) => {
+        if (rowIndex === row && colIndex === col) {
+          const currentStyle = cell.style || {}; // Default to empty object if no style exists
+          const updatedStyle = { ...currentStyle, ...style };
+  
+          // Handle font size separately
+          if (style.fontSize) {
+            updatedStyle.fontSize = `${style.fontSize}px`;
+          }
+  
+          return {
+            ...cell,
+            style: updatedStyle,
+          };
+        }
+        return cell; // Return unmodified cells
+      })
+    );
+  
+    setData(updatedData); // Update the state with the new data
   };
+  
 
   // Add Row
   const addRow = () => {
@@ -250,7 +261,7 @@ const Spreadsheet = () => {
                     </option>
                   ))}
                 </select>
-                <button onClick={() => applyStyle({ fontSize: `${fontSize}px` })}>
+                <button onClick={(fontSize) => applyStyle({ fontSize: `${fontSize}px` })}>
                     Apply Font Size
                 </button>
 
@@ -324,7 +335,7 @@ const Spreadsheet = () => {
             {row.map((cell, colIndex) => (
               <input
                 key={`${rowIndex}-${colIndex}`}
-                className="grid-cell"
+                className={`grid-cell ${selectedCell && selectedCell[0] === rowIndex && selectedCell[1] === colIndex ? "selected" : ""}`}
                 value={cell.value}
                 onMouseDown={() => handleMouseDown(rowIndex, colIndex)}
                 onMouseEnter={() => handleMouseEnter(rowIndex, colIndex)}
