@@ -23,7 +23,6 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-
 const ChartComponent = ({ data, chartType }) => {
   // Extract labels and values from the first column
   const labels = data.map((_, index) => `Row ${index + 1}`);
@@ -54,22 +53,28 @@ const ChartComponent = ({ data, chartType }) => {
     ],
   };
 
+  // Chart.js options to control size and layout
+  const chartOptions = {
+    maintainAspectRatio: false,
+    responsive: true,
+  };
+
   // Render the selected chart type
   const renderChart = () => {
     switch (chartType) {
       case "bar":
-        return <Bar data={chartConfig} />;
+        return <Bar data={chartConfig} options={chartOptions} />;
       case "line":
-        return <Line data={chartConfig} />;
+        return <Line data={chartConfig} options={chartOptions} />;
       case "pie":
-        return <Pie data={chartConfig} />;
+        return <Pie data={chartConfig} options={chartOptions} />;
       default:
-        return <Bar data={chartConfig} />;
+        return <Bar data={chartConfig} options={chartOptions} />;
     }
   };
 
   return (
-    <div style={{ marginTop: "20px" }}>
+    <div style={{ marginTop: "20px", width: "400px", height: "300px" }}>
       <h3>Data Visualization</h3>
       {renderChart()}
     </div>
